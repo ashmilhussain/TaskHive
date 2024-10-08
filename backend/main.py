@@ -100,30 +100,35 @@ app.add_middleware(
 async def chat_response(chat_message: ChatMessage):
     openai.api_key = os.getenv("OPENAI_API_KEY")  # Set your OpenAI API key from environment variable
     prompt = (
-        "Analyze the following query to determine whether the intent is to create a new contact or add a task for an existing contact. Based on the identified intent:\n\n"
-        "If the intent is to create a contact, extract the name, phone number, email, and organization.\n"
-        "If the intent is to add a task for an existing contact, extract the task description, due date, and identify the contact (name, phone, or email) to assign the task to.\n"
-        "Return only the JSON format minified and without any markdown with the extracted details. If the intent does not match \"create_contact\" or \"add_task,\" return a JSON response with the intent as \"out_of_context.\" If any details are missing, indicate their absence with null. out put must be a minfied json for mandatory"
-        "Query:\n"
-        +chat_message.message+
-        "Expected Output:\n"
-        "Return the following JSON format:\n\n"
-        "{\n"
-        "  \"intent\": \"[Extracted Intent]\",\n"
-        "  \"details\": {\n"
-        "    \"name\": \"[Extracted Name]\",\n"
-        "    \"phone\": \"[Extracted Phone Number]\",\n"
-        "    \"email\": \"[Extracted Email]\",\n"
-        "    \"organization\": \"[Extracted Organization]\",\n"
-        "    \"task_description\": \"[Extracted Task Description]\",\n"
-        "    \"due_date\": \"[Extracted Due Date]\",\n"
-        "    \"assigned_contact\": {\n"
-        "      \"name\": \"[Extracted Contact Name]\",\n"
-        "      \"phone\": \"[Extracted Contact Phone]\",\n"
-        "      \"email\": \"[Extracted Contact Email]\"\n"
-        "    }\n"
-        "  }\n"
-        "}\n"
+        """
+        Analyze the following query to determine whether the intent is to create a new contact or add a task for an existing contact. Based on the identified intent:
+
+        If the intent is to create a contact, extract the name, phone number, email, and organization.
+        If the intent is to add a task for an existing contact, extract the task description, due date, and identify the contact (name, phone, or email) to assign the task to.
+        Return only the JSON format minified and without any markdown with the extracted details. If the intent does not match "create_contact" or "add_task," return a JSON response with the intent as "out_of_context." If any details are missing, indicate their absence with null. out put must be a minfied json for mandatory
+
+        Query:
+        {chat_message.message}
+        Expected Output:
+        Return the following JSON format:
+
+        {
+          "intent": "[Extracted Intent]",
+          "details": {
+            "name": "[Extracted Name]",
+            "phone": "[Extracted Phone Number]",
+            "email": "[Extracted Email]",
+            "organization": "[Extracted Organization]",
+            "task_description": "[Extracted Task Description]",
+            "due_date": "[Extracted Due Date]",
+            "assigned_contact": {
+              "name": "[Extracted Contact Name]",
+              "phone": "[Extracted Contact Phone]",
+              "email": "[Extracted Contact Email]"
+            }
+          }
+        }
+        """
     )
     try:
         # Call the OpenAI API with the provided message
