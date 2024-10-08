@@ -1,0 +1,16 @@
+# Ignore virtual environment
+.venv/
+
+# Ignore React build files
+/build/
+dist/
+
+# Ignore unwanted Python files
+*.pyc
+backend/__pycache__/
+backend/taskhive.db
+frontend/node_modules
+frontend/build
+frontend/dist
+frontend/package-lock.json
+frontend/yarn.lock
