@@ -345,3 +345,63 @@ button {
 button:hover {
     background-color: #0056b3; /* Darker shade on hover */
 }
+
+/* Add styles for the tasks page */
+.table {
+    width: 100%; /* Full width */
+    border-collapse: collapse; /* Collapse borders */
+}
+
+th, td {
+    padding: 12px; /* Padding inside cells */
+    text-align: left; /* Align text to the left */
+    border-bottom: 1px solid #ddd; /* Bottom border for rows */
+}
+
+th {
+    background-color: #f2f2f2; /* Light gray background for header */
+    font-weight: bold; /* Bold text for header */
+}
+
+tr:hover {
+    background-color: #f5f5f5; /* Highlight row on hover */
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    right: 0; /* Position the modal on the right side */
+    width: 33.33%; /* 1/3 of the screen width */
+    height: 100%; /* Full height */
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5); /* Shadow for depth */
+    z-index: 1000; /* Ensure it is above other content */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    transition: transform 0.3s ease; /* Smooth transition */
+    transform: translateX(100%); /* Start off-screen to the right */
+}
+
+.modal.open {
+    transform: translateX(0); /* Move into view when open */
+}
+
+.modal-content {
+    padding: 20px; /* Padding inside the modal */
+    border: none; /* Ensure no border around the content */
+    height: 100%; /* Full height for the content */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+}
+
+.close {
+    cursor: pointer; /* Change cursor to pointer on hover */
+    font-size: 24px; /* Size of the close button */
+    position: absolute; /* Positioning for the close button */
+    top: 10px; /* Distance from the top */
+    left: 20px; /* Change right to left for close button positioning */
+}
+
+.modal-content h2 {
+    margin-top: 0; /* Remove top margin for the title */
+}

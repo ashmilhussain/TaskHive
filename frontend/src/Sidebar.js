@@ -7,6 +7,11 @@ const Sidebar = () => {
             <h2>TaskHive</h2>
             <ul>
                 <li>
+                    <Link to="/">
+                        <i className="fas fa-home"></i> Home
+                    </Link>
+                </li>
+                <li>
                     <Link to="/contacts">
                         <i className="fas fa-address-book"></i> Contacts
                     </Link>

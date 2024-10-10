@@ -8,7 +8,7 @@ def add_task_to_db(task: TaskCreate, db: Session) -> TaskResponse:
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
-    return TaskResponse(**db_task.dict())
+    return TaskResponse(id=db_task.id, title=db_task.title, description=db_task.description, completed=db_task.completed, created_time=db_task.created_time)
 
 def update_task_in_db(task_id: int, updated_task: TaskCreate, db: Session) -> TaskResponse:
     db_task = db.query(Task).filter(Task.id == task_id).first()

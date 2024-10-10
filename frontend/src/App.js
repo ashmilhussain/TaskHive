@@ -15,10 +15,10 @@ const App = () => {
                 <div className="content">
                     <Routes>
                         <Route path="/contacts" element={<Contacts />} />
-                        <Route path="/tasks" element={<Tasks />} />
+                        <Route path="/tasks" element={<Tasks />} /> {/* New route for tasks */}
                         <Route path="/calendar" element={<Calendar />} />
-                        <Route path="/create-contact" element={<CreateContact />} /> {/* New route */}
-                        <Route path="/" element={<ChatBox />} /> {/* Replace the welcome message with the ChatBox */}
+                        <Route path="/create-contact" element={<CreateContact />} />
+                        <Route path="/" element={<ChatBox />} />
                     </Routes>
                 </div>
             </div>
