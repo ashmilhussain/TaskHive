@@ -2,8 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime,timezone
 from pydantic import BaseModel
-
-Base = declarative_base()
+from models.base import Base
 
 class Task(Base):
     __tablename__ = "tasks"

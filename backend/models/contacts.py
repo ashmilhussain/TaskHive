@@ -4,7 +4,7 @@ from datetime import datetime,timezone
 from pydantic import BaseModel
 from typing import Optional
 
-Base = declarative_base()
+from models.base import Base
 
 # SQLAlchemy model
 class Contact(Base):

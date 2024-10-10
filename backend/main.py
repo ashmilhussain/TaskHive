@@ -16,6 +16,8 @@ from contacts import add_contact_db,list_contacts_db,update_contact_db,delete_co
 
 # Import the new functions from tasks.py
 from tasks import add_task_to_db, update_task_in_db, delete_task_from_db, list_tasks_from_db, get_task_from_db
+from models.base import Base
+
 
 app = FastAPI()
 
@@ -23,12 +25,8 @@ app = FastAPI()
 DATABASE_URL = "sqlite:///./taskhive.db"  # Changed database name to taskhive
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
 
-
-# Create the database table
 Base.metadata.create_all(bind=engine)
-
 # Dependency to get the database session
 def get_db():
     db = SessionLocal()
