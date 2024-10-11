@@ -97,8 +97,7 @@ app.add_middleware(
 @app.post("/chat")
 async def chat_response(chat_message: ChatMessage):
     openai.api_key = os.getenv("OPENAI_API_KEY")  # Set your OpenAI API key from environment variable
-    prompt = (
-        """
+    prompt = (f"""
         Analyze the following query to determine whether the intent is to create a new contact or add a task for an existing contact. Based on the identified intent:
 
         If the intent is to create a contact, extract the name, phone number, email, and organization.
@@ -110,24 +109,25 @@ async def chat_response(chat_message: ChatMessage):
         Expected Output:
         Return the following JSON format:
 
-        {
+        {{
           "intent": "[Extracted Intent]",
-          "details": {
+          "details": {{
             "name": "[Extracted Name]",
             "phone": "[Extracted Phone Number]",
             "email": "[Extracted Email]",
             "organization": "[Extracted Organization]",
             "task_description": "[Extracted Task Description]",
             "due_date": "[Extracted Due Date]",
-            "assigned_contact": {
+            "assigned_contact": {{
               "name": "[Extracted Contact Name]",
               "phone": "[Extracted Contact Phone]",
               "email": "[Extracted Contact Email]"
-            }
-          }
-        }
+            }}
+          }}
+        }}
         """
     )
+    print(prompt)
     try:
         # Call the OpenAI API with the provided message
         response = openai.chat.completions.create(
@@ -151,12 +151,19 @@ async def chat_response(chat_message: ChatMessage):
             intent = parsed_response["intent"]  # Extract intent
             details = parsed_response["details"]  # Extract details
             
-            # Print intent and details to the terminal
-            print("Intent:", intent)  # Print the intent
-            print("Details:", details)  # Print the details
-        else:
-            print("Error: Unexpected JSON structure:", parsed_response)
-
+            # {{ edit_1 }}
+            if intent == "create_contact":
+                # Call the add_contact_db function with the extracted details
+                contact_data = ContactCreate(
+                    name=details.get("name"),
+                    mobile=details.get("phone"),
+                    email=details.get("email"),
+                    organization=details.get("organization")
+                )
+                db_session = next(get_db())  # Get the database session
+                add_contact_db(contact_data, db_session)  # Add the contact to the database
+            # {{ edit_1 }}
+        
         return {"response": response_message}
     except Exception as e:
         print(e)
