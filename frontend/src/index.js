@@ -36,7 +36,6 @@ const ChatBox = () => {
 ReactDOM.render(
     <React.StrictMode>
         <App />
-        <ChatBox /> {/* Added ChatBox component */}
     </React.StrictMode>,
     document.getElementById('root') // This should match the ID in index.html
 );

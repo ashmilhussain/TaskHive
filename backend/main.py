@@ -1,4 +1,3 @@
-import openai  # Add this import for OpenAI API
 from fastapi import FastAPI, HTTPException, Depends
 from typing import List
 from datetime import datetime
@@ -17,6 +16,7 @@ from contacts import add_contact_db,list_contacts_db,update_contact_db,delete_co
 # Import the new functions from tasks.py
 from tasks import add_task_to_db, update_task_in_db, delete_task_from_db, list_tasks_from_db, get_task_from_db
 from models.base import Base
+from modules.openai import openai_call
 
 
 app = FastAPI()
@@ -96,7 +96,7 @@ app.add_middleware(
 
 @app.post("/chat")
 async def chat_response(chat_message: ChatMessage):
-    openai.api_key = os.getenv("OPENAI_API_KEY")  # Set your OpenAI API key from environment variable
+
     prompt = (f"""
         Analyze the following query to determine whether the intent is to create a new contact or add a task for an existing contact. Based on the identified intent:
 
@@ -129,23 +129,7 @@ async def chat_response(chat_message: ChatMessage):
     )
     print(prompt)
     try:
-        # Call the OpenAI API with the provided message
-        response = openai.chat.completions.create(
-            model="gpt-4o-mini",  # Specify the model
-            messages=[{"role": "user", "content": prompt}],
-            stream=True,
-        )
-        
-        response_message = ""
-        # Use a synchronous loop to handle the response
-        for chunk in response:  # Iterate over the response chunks
-            if chunk.choices and chunk.choices[0].delta.content:  # Check if choices exist and content is not None
-                delta_content = chunk.choices[0].delta.content  # Extract the response message
-                response_message += delta_content  # Append to the response message
-        print(response_message)
-        # Parse the JSON response
-        parsed_response = json.loads(response_message)  # Parse the JSON string
-        
+        parsed_response = openai_call(prompt)
         # Check if the parsed response has the expected structure
         if "intent" in parsed_response and "details" in parsed_response:
             intent = parsed_response["intent"]  # Extract intent
@@ -164,7 +148,7 @@ async def chat_response(chat_message: ChatMessage):
                 add_contact_db(contact_data, db_session)  # Add the contact to the database
             # {{ edit_1 }}
         
-        return {"response": response_message}
+        return {"response": parsed_response}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))  # Return an error response
