@@ -24,8 +24,18 @@ class Contact(Base):
 # Pydantic model
 class ContactCreate(BaseModel):
     name: str
-    mobile: str
-    email: str
+    mobile: Optional[str] = None  # Optional field
+    email: Optional[str] = None  # Optional field
+    organization: Optional[str] = None  # Optional field
+
+    class Config:
+        orm_mode = True  # Enable ORM mode to read data as dictionaries
+
+# Pydantic model
+class ContactUpdate(BaseModel):
+    name:  Optional[str] = None  # Optional field
+    mobile: Optional[str] = None  # Optional field
+    email: Optional[str] = None  # Optional field
     organization: Optional[str] = None  # Optional field
 
     class Config:
@@ -33,9 +43,9 @@ class ContactCreate(BaseModel):
 
 class ContactResponse(BaseModel):
     id: int
-    name: str
-    mobile: str
-    email: str
+    name: Optional[str] = None
+    mobile: Optional[str] = None
+    email: Optional[str] = None
     organization: Optional[str] = None
     created_time: datetime
     last_activity_time: datetime
