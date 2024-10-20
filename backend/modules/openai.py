@@ -18,7 +18,7 @@ def openai_call(prompt) -> dict:
             if chunk.choices and chunk.choices[0].delta.content:  # Check if choices exist and content is not None
                 delta_content = chunk.choices[0].delta.content  # Extract the response message
                 response_message += delta_content  # Append to the response message
-        print(response_message)
         # Parse the JSON response
-        parsed_response = json.loads(response_message)  # Parse the JSON string
-        return parsed_response
+        response_message
+        output= {"content":response_message}
+        return output

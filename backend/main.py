@@ -1,12 +1,8 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, Depends
 from typing import List
 from datetime import datetime
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean  # Add this import for task completion status
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
 from fastapi.middleware.cors import CORSMiddleware
-import os  # Import os for environment variable access
-import json  # Add this import for JSON parsing
+from utils.dbutils import DBUtils
 
 from models.contacts import ContactCreate,ContactResponse  # Ensure correct imports
 from models.tasks import TaskCreate, TaskResponse
@@ -15,75 +11,67 @@ from contacts import add_contact_db,list_contacts_db,update_contact_db,delete_co
 
 # Import the new functions from tasks.py
 from tasks import add_task_to_db, update_task_in_db, delete_task_from_db, list_tasks_from_db, get_task_from_db
-from models.base import Base
-from modules.openai import openai_call
+from starlette.requests import Request
+from chains.init_chain import intent_chain
+from sqlalchemy.orm import Session
 
 
 app = FastAPI()
 
-# Database setup
-DATABASE_URL = "sqlite:///./taskhive.db"  # Changed database name to taskhive
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+DB = DBUtils()
+dbSession : Session = Depends(DB.get_db)
 
-Base.metadata.create_all(bind=engine)
-# Dependency to get the database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+app.chain = intent_chain(DB)
 
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
 
 @app.post("/contacts", response_model=ContactResponse)
-def add_contact(contact: ContactCreate, db: Session = Depends(get_db)):
-    return add_contact_db(contact,db)
+def add_contact(contact: ContactCreate,dbSession : Session = Depends(DB.get_db)):
+    return add_contact_db(contact,dbSession)
 
 @app.put("/contacts/{contact_id}", response_model=ContactResponse)
-def update_contact(contact_id: int, updated_contact: ContactCreate, db: Session = Depends(get_db)):
-    return update_contact_db(contact_id, updated_contact, db)
+def update_contact(contact_id: int, updated_contact: ContactCreate,dbSession : Session = Depends(DB.get_db)):
+    return update_contact_db(contact_id, updated_contact, dbSession)
 
 @app.delete("/contacts/{contact_id}")
-def delete_contact(contact_id: int, db: Session = Depends(get_db)):
-    return delete_contact_db(contact_id, db)
+def delete_contact(contact_id: int):
+    return delete_contact_db(contact_id, dbSession)
 
 @app.get("/contacts", response_model=List[ContactResponse])
-def list_contacts(db: Session = Depends(get_db)):
-    return list_contacts_db(db)
+def list_contacts():
+    return list_contacts_db()
 
 @app.get("/contacts/{contact_id}", response_model=ContactResponse)
-def get_contact(contact_id: int, db: Session = Depends(get_db)):
-    return get_contact_db(contact_id, db)
+def get_contact(contact_id: int):
+    return get_contact_db(contact_id, dbSession)
 
 
 # Endpoint to add a task
 @app.post("/tasks", response_model=TaskResponse)
-def add_task(task: TaskCreate, db: Session = Depends(get_db)):
-    return add_task_to_db(task, db)
+def add_task(task: TaskCreate):
+    return add_task_to_db(task, dbSession)
 
 # Endpoint to update a task
 @app.put("/tasks/{task_id}", response_model=TaskResponse)
-def update_task(task_id: int, updated_task: TaskCreate, db: Session = Depends(get_db)):
-    return update_task_in_db(task_id, updated_task, db)
+def update_task(task_id: int, updated_task: TaskCreate):
+    return update_task_in_db(task_id, updated_task, dbSession)
 
 # Endpoint to delete a task
 @app.delete("/tasks/{task_id}")
-def delete_task(task_id: int, db: Session = Depends(get_db)):
-    return delete_task_from_db(task_id, db)
+def delete_task(task_id: int):
+    return delete_task_from_db(task_id, dbSession)
 
 # Endpoint to list tasks
 @app.get("/tasks", response_model=List[TaskResponse])
-def list_tasks(db: Session = Depends(get_db)):
-    return list_tasks_from_db(db)
+def list_tasks():
+    return list_tasks_from_db(dbSession)
 
 # Endpoint to get a specific task
 @app.get("/tasks/{task_id}", response_model=TaskResponse)
-def get_task(task_id: int, db: Session = Depends(get_db)):
-    return get_task_from_db(task_id, db)
+def get_task(task_id: int):
+    return get_task_from_db(task_id, dbSession)
 
 # CORS configuration
 app.add_middleware(
@@ -95,63 +83,12 @@ app.add_middleware(
 )
 
 @app.post("/chat")
-async def chat_response(chat_message: ChatMessage):
+async def chat_response(chat_message: ChatMessage,request: Request):
 
-    prompt = (f"""
-        Analyze the following query to determine whether the intent is to create a new contact or add a task for an existing contact. Based on the identified intent:
-
-        If the intent is to create a contact, extract the name, phone number, email, and organization.
-        If the intent is to add a task for an existing contact, extract the task description, due date, and identify the contact (name, phone, or email) to assign the task to.
-        Return only the JSON format minified and without any markdown with the extracted details. If the intent does not match "create_contact" or "add_task," return a JSON response with the intent as "out_of_context." If any details are missing, indicate their absence with null. out put must be a minfied json for mandatory
-
-        Query:
-        {chat_message.message}
-        Expected Output:
-        Return the following JSON format:
-
-        {{
-          "intent": "[Extracted Intent]",
-          "details": {{
-            "name": "[Extracted Name]",
-            "phone": "[Extracted Phone Number]",
-            "email": "[Extracted Email]",
-            "organization": "[Extracted Organization]",
-            "task_description": "[Extracted Task Description]",
-            "due_date": "[Extracted Due Date]",
-            "assigned_contact": {{
-              "name": "[Extracted Contact Name]",
-              "phone": "[Extracted Contact Phone]",
-              "email": "[Extracted Contact Email]"
-            }}
-          }}
-        }}
-        """
-    )
-    print(prompt)
-    try:
-        parsed_response = openai_call(prompt)
-        # Check if the parsed response has the expected structure
-        if "intent" in parsed_response and "details" in parsed_response:
-            intent = parsed_response["intent"]  # Extract intent
-            details = parsed_response["details"]  # Extract details
-            
-            # {{ edit_1 }}
-            if intent == "create_contact":
-                # Call the add_contact_db function with the extracted details
-                contact_data = ContactCreate(
-                    name=details.get("name"),
-                    mobile=details.get("phone"),
-                    email=details.get("email"),
-                    organization=details.get("organization")
-                )
-                db_session = next(get_db())  # Get the database session
-                add_contact_db(contact_data, db_session)  # Add the contact to the database
-            # {{ edit_1 }}
-        
-        return {"response": parsed_response}
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))  # Return an error response
+    out = app.chain.invoke({
+        "question": chat_message.message,
+    })
+    return out
 
 if __name__ == "__main__":
     import uvicorn
