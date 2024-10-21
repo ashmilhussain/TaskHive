@@ -19,7 +19,7 @@ class Router(AbstractHandler):
     """
 
 
-    def __init__(self,db,fallback_handler, contact_handler, task_handler,notes_handler) -> None:
+    def __init__(self,db,fallback_handler, contact_handler, task_handler,note_handler) -> None:
         """
         Initializes the Router with the provided handlers.
 
@@ -34,7 +34,7 @@ class Router(AbstractHandler):
         self.fallback_handler = fallback_handler
         self.contact_handler = contact_handler
         self.task_handler = task_handler
-        self.notes_handler = notes_handler
+        self.note_handler = note_handler
         self.db = db
 
 
@@ -51,10 +51,10 @@ class Router(AbstractHandler):
         """
 
         logger.info("passing through => Router")
-        response = request
         intent_extractor = request.get("intent_extractor", {})
         intent = intent_extractor.get("intent", "")
         action = intent_extractor.get("action", "")
+        logger.info(f"intent {intent} action {action}")
         query = request.get("query", {})
         out_response={}
         if intent:
@@ -62,8 +62,8 @@ class Router(AbstractHandler):
                 return self.contact_handler.handle(self.db,intent,action,query)
             elif intent == "task":
                 return self.task_handler.handle(self.db,intent,action,query)
-            elif intent == "notes":
-                return self.notes_handler.handle(intent,action,query)
+            elif intent == "note":
+                return self.note_handler.handle(self.db,intent,action,query)
             else:
                 out_response["status"] = "intent not found"
                 out_response["message"] = "Sorry, I can't help you with that. Is there anything i can help you with ?"

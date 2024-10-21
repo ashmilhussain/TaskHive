@@ -8,6 +8,6 @@ def intent_chain(db) -> IntentChain:
     post_processor = PostProcessor()
     contact_chain = ContactHandler()
     task_chain = TaskHandler()
-    notes_chain = NotesHandler()
-    intent_chain = IntentChain(db,post_processor,contact_chain,task_chain,notes_chain)
+    note_chain = NotesHandler()
+    intent_chain = IntentChain(db,post_processor,contact_chain,task_chain,note_chain)
     return intent_chain

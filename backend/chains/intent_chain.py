@@ -28,7 +28,7 @@ class IntentChain:
     for a specific part of the processing pipeline. This allows for flexibility
     and easy extension of functionality.
     """
-    def __init__(self,db,post_processor,contact_handler,task_handler,notes_handler):
+    def __init__(self,db,post_processor,contact_handler,task_handler,note_handler):
         logger.info("loading modules into chain")
 
 
@@ -37,7 +37,7 @@ class IntentChain:
         }
 
         self.intent_extractor = IntentExtracter()
-        self.router = Router(db,post_processor,contact_handler, task_handler,notes_handler)
+        self.router = Router(db,post_processor,contact_handler, task_handler,note_handler)
 
         self.intent_extractor.set_next(self.router)
         self.handler = self.intent_extractor
