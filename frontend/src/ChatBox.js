@@ -5,25 +5,28 @@ import axios from 'axios'; // Import axios for making HTTP requests
 const ChatBox = () => {
     const [messages, setMessages] = useState([]); // State to hold chat messages
     const [input, setInput] = useState(''); // State for the input field
+    const [loading, setLoading] = useState(false); // State for loading indicator
 
     const handleSend = async () => {
         if (input.trim()) {
             const userMessage = { message: input };
             setMessages([...messages, { text: input, sender: 'user' }]); // Add user message
             setInput(''); // Clear input field
+            setLoading(true); // Set loading to true
 
             try {
                 // Send the message to the backend
                 const response = await axios.post('http://localhost:8080/chat', userMessage);
                 // Add the bot's response to the messages
-                console.log(response.data)
+                console.log(response.data);
                 setMessages(prevMessages => [
                     ...prevMessages,
-                    { text: response.data.status +" : "+ response.data.message, sender: 'bot' }
+                    { text: response.data.status + " : " + response.data.message, sender: 'bot' }
                 ]);
-    
             } catch (error) {
                 console.error('Error sending message:', error);
+            } finally {
+                setLoading(false); // Set loading to false after response
             }
         }
     };
@@ -43,6 +46,11 @@ const ChatBox = () => {
                         {msg.text}
                     </div>
                 ))}
+                {loading && <div className="loading-dots">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                </div>} {/* Loading indicator */}
             </div>
             <div className="message-input">
                 <input

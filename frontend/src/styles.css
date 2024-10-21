@@ -405,3 +405,47 @@ tr:hover {
 .modal-content h2 {
     margin-top: 0; /* Remove top margin for the title */
 }
+
+.loading-dots {
+    display: flex; /* Use flexbox to align dots */
+    padding-left: 12px;
+    padding-top: 8px;
+}
+
+.dot {
+    width: 12px; /* Width of each dot */
+    height: 12px; /* Height of each dot */
+    margin: 0 3px; /* Space between dots */
+    border-radius: 50%; /* Make the dots rounded */
+    background-color: #9bc5e0; /* Dot color */
+    animation: dot-blink 1.5s infinite; /* Animation for blinking */
+}
+
+/* Animation for each dot */
+@keyframes dot-blink {
+    0%, 20% {
+        opacity: 0;
+    }
+    40% {
+        opacity: 1;
+    }
+    60% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Add delays for each dot */
+.dot:nth-child(1) {
+    animation-delay: 0s; /* No delay for the first dot */
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.3s; /* Delay for the second dot */
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.6s; /* Delay for the third dot */
+}
