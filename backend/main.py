@@ -36,12 +36,12 @@ def update_contact(contact_id: int, updated_contact: ContactCreate,dbSession : S
     return update_contact_db(contact_id, updated_contact, dbSession)
 
 @app.delete("/contacts/{contact_id}")
-def delete_contact(contact_id: int):
+def delete_contact(contact_id: int,dbSession : Session = Depends(DB.get_db)):
     return delete_contact_db(contact_id, dbSession)
 
 @app.get("/contacts", response_model=List[ContactResponse])
-def list_contacts():
-    return list_contacts_db()
+def list_contacts(dbSession : Session = Depends(DB.get_db)):
+    return list_contacts_db(dbSession)
 
 @app.get("/contacts/{contact_id}", response_model=ContactResponse)
 def get_contact(contact_id: int):
@@ -50,27 +50,27 @@ def get_contact(contact_id: int):
 
 # Endpoint to add a task
 @app.post("/tasks", response_model=TaskResponse)
-def add_task(task: TaskCreate):
+def add_task(task: TaskCreate,dbSession : Session = Depends(DB.get_db)):
     return add_task_to_db(task, dbSession)
 
 # Endpoint to update a task
 @app.put("/tasks/{task_id}", response_model=TaskResponse)
-def update_task(task_id: int, updated_task: TaskCreate):
+def update_task(task_id: int, updated_task: TaskCreate,dbSession : Session = Depends(DB.get_db)):
     return update_task_in_db(task_id, updated_task, dbSession)
 
 # Endpoint to delete a task
 @app.delete("/tasks/{task_id}")
-def delete_task(task_id: int):
+def delete_task(task_id: int,dbSession : Session = Depends(DB.get_db)):
     return delete_task_from_db(task_id, dbSession)
 
 # Endpoint to list tasks
 @app.get("/tasks", response_model=List[TaskResponse])
-def list_tasks():
+def list_tasks(dbSession : Session = Depends(DB.get_db)):
     return list_tasks_from_db(dbSession)
 
 # Endpoint to get a specific task
 @app.get("/tasks/{task_id}", response_model=TaskResponse)
-def get_task(task_id: int):
+def get_task(task_id: int,dbSession : Session = Depends(DB.get_db)):
     return get_task_from_db(task_id, dbSession)
 
 # CORS configuration

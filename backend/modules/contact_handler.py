@@ -4,7 +4,6 @@ from modules.openai import openai_call
 from utils.parser import parse_llm_response
 from contacts import add_contact_db,list_contacts_db,update_contact_db,delete_contact_db,get_contact_db
 from models.contacts import ContactCreate,ContactUpdate
-from sqlalchemy.orm import Session
 
 class ContactHandler():
 
@@ -39,7 +38,7 @@ class ContactHandler():
         )
         response = openai_call(prompt)
         response["content"] = parse_llm_response(response["content"])
-        out = "contact triggered"
+        out_reposponse = {}
         contact_info = response["content"]
         if action == "create" :
             contact = ContactCreate(
@@ -49,12 +48,16 @@ class ContactHandler():
                 organization=contact_info.get("organisation", "")
             )
             out = add_contact_db(contact, next(db.get_db()))  # Ensure to get the session
+            out_reposponse["status"]="contact created"
+            out_reposponse["message"]=out.name
         elif action =="update" :
             contact = ContactUpdate()
             for field, value in contact_info.items():
                 if value:
                     setattr(contact, field, value)
             out = update_contact_db(4,contact, next(db.get_db()))  # Ensure to get the session
+            out_reposponse["status"]="contact updated"
+            out_reposponse["message"]=out.name
         else :
             logger.info("action didn't match")
-        return out
+        return out_reposponse

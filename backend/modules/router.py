@@ -52,24 +52,26 @@ class Router(AbstractHandler):
 
         logger.info("passing through => Router")
         response = request
-
         intent_extractor = request.get("intent_extractor", {})
         intent = intent_extractor.get("intent", "")
         action = intent_extractor.get("action", "")
         query = request.get("query", {})
+        out_response={}
         if intent:
             if intent == "contact":
                 return self.contact_handler.handle(self.db,intent,action,query)
             elif intent == "task":
-                return self.contact_handler.handle(intent,action,query)
+                return self.task_handler.handle(self.db,intent,action,query)
             elif intent == "notes":
-                return self.contact_handler.handle(intent,action,query)
+                return self.notes_handler.handle(intent,action,query)
             else:
-                response = "Sorry, I can't help you with that. Is there anything i can help you with ?"
-                return self.fallback_handler.handle(response)
+                out_response["status"] = "intent not found"
+                out_response["message"] = "Sorry, I can't help you with that. Is there anything i can help you with ?"
+                return self.fallback_handler.handle(out_response)
 
         else:
             logger.info("No intents detected")
-            response = "Sorry, I can't help you with that. Is there anything i can help you with ?"
-            return self.fallback_handler.handle(response)
+            out_response["status"] = "intent not found"
+            out_response["message"] = "Sorry, I can't help you with that. Is there anything i can help you with ?"
+            return self.fallback_handler.handle(out_response)
 
