@@ -28,6 +28,13 @@ const ChatBox = () => {
         }
     };
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default behavior (like a new line)
+            handleSend(); // Call the send message function
+        }
+    };
+
     return (
         <div className="chat-container">
             <div className="messages">
@@ -43,6 +50,7 @@ const ChatBox = () => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Type your message..."
+                    onKeyDown={handleKeyDown} // Add keydown event listener
                 />
                 <button onClick={handleSend}>Send</button>
             </div>
