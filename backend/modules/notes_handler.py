@@ -22,6 +22,7 @@ class NotesHandler():
             - contact: A task may be connected with a contact , check if the task is related to a contact and if yes extract it
 
         2. If any value is not available keep "".
+        3. Make Name and Title start with capital by default
         Generate a response for the explanation '$query' in the following JSON format:
         {
             "description": "Extracted description if available",

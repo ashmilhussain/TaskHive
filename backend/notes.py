@@ -11,7 +11,7 @@ def add_note_to_db(note: NoteCreate, db: Session) -> NoteResponse:
     return NoteResponse(id=db_note.id, title=db_note.title, description=db_note.description, completed=db_note.completed, created_time=db_note.created_time)
 
 def update_note_in_db(note_id: int, updated_note: NoteCreate, db: Session) -> NoteResponse:
-    db_note = db.query(NoteUpdate).filter(NoteUpdate.id == note_id).first()
+    db_note = db.query(Note).filter(Note.id == note_id).first()
     if db_note is None:
         raise HTTPException(status_code=404, detail="Note not found")
     

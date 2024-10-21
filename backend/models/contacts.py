@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime,timezone
 from pydantic import BaseModel
 from typing import Optional
+from sqlalchemy.orm import relationship
 
 from models.base import Base
 
@@ -17,6 +18,8 @@ class Contact(Base):
     organization = Column(String, index=True)
     created_time = Column(DateTime, default=datetime.now(timezone.utc))  # Automatically set to current time
     last_activity_time = Column(DateTime, default=datetime.now(timezone.utc))  # Automatically set to current time
+
+    tasks = relationship("Task", back_populates="contact")  # Ensure this line is present
 
     class Config:
         arbitrary_types_allowed = True  # Allow arbitrary types like SQLAlchemy Column

@@ -6,11 +6,14 @@ from utils.dbutils import DBUtils
 
 from models.contacts import ContactCreate,ContactResponse  # Ensure correct imports
 from models.tasks import TaskCreate, TaskResponse
-from models.chat import ChatMessage
-from contacts import add_contact_db,list_contacts_db,update_contact_db,delete_contact_db,get_contact_db
+from models.notes import NoteCreate, NoteResponse
 
-# Import the new functions from tasks.py
+from models.chat import ChatMessage
+
+from contacts import add_contact_db,list_contacts_db,update_contact_db,delete_contact_db,get_contact_db
 from tasks import add_task_to_db, update_task_in_db, delete_task_from_db, list_tasks_from_db, get_task_from_db
+from notes import add_note_to_db, update_note_in_db, delete_note_from_db, list_notes_from_db, get_note_from_db
+
 from starlette.requests import Request
 from chains.init_chain import intent_chain
 from sqlalchemy.orm import Session
@@ -73,6 +76,33 @@ def list_tasks(dbSession : Session = Depends(DB.get_db)):
 def get_task(task_id: int,dbSession : Session = Depends(DB.get_db)):
     return get_task_from_db(task_id, dbSession)
 
+
+# Endpoint to add a note
+@app.post("/notes", response_model=NoteResponse)
+def add_note(note: NoteCreate, dbSession: Session = Depends(DB.get_db)):
+    return add_note_to_db(note, dbSession)
+
+# Endpoint to update a note
+@app.put("/notes/{note_id}", response_model=NoteResponse)
+def update_note(note_id: int, updated_note: NoteCreate, dbSession: Session = Depends(DB.get_db)):
+    return update_note_in_db(note_id, updated_note, dbSession)
+
+# Endpoint to delete a note
+@app.delete("/notes/{note_id}")
+def delete_note(note_id: int, dbSession: Session = Depends(DB.get_db)):
+    return delete_note_from_db(note_id, dbSession)
+
+# Endpoint to list notes
+@app.get("/notes", response_model=List[NoteResponse])
+def list_notes(dbSession: Session = Depends(DB.get_db)):
+    return list_notes_from_db(dbSession)
+
+# Endpoint to get a specific note
+@app.get("/notes/{note_id}", response_model=NoteResponse)
+def get_note(note_id: int, dbSession: Session = Depends(DB.get_db)):
+    return get_note_from_db(note_id, dbSession)
+
+
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
@@ -89,6 +119,7 @@ async def chat_response(chat_message: ChatMessage,request: Request):
         "question": chat_message.message,
     })
     return out
+
 
 if __name__ == "__main__":
     import uvicorn

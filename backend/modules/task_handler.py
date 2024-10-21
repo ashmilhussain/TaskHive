@@ -24,6 +24,7 @@ class TaskHandler():
             - due_date: Due date for the task, this can be only date availble
 
         2. If any value is not available keep "".
+        3. Make Name and Title start with capital by default
         Generate a response for the explanation '$query' in the following JSON format:
         {
             "title": "Extracted title if available",

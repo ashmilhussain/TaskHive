@@ -22,6 +22,7 @@ class ContactHandler():
             - email: The email address of the contact
             - organisation: The organization of the contact
         2. If any value is not available keep "".
+        3. Make Name and Title start with capital by default
 
         Generate a response for the explanation '$query' in the following JSON format:
 
