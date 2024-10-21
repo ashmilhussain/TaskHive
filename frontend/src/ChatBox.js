@@ -16,14 +16,12 @@ const ChatBox = () => {
                 // Send the message to the backend
                 const response = await axios.post('http://localhost:8080/chat', userMessage);
                 // Add the bot's response to the messages
-                if (response.data.response.intent!="out_of_context") {
+                console.log(response.data)
                 setMessages(prevMessages => [
                     ...prevMessages,
-                    { text: response.data.response.details.name, sender: 'bot' }
+                    { text: response.data.status +" : "+ response.data.message, sender: 'bot' }
                 ]);
-            }else{
-                console.log(response.data)
-            }
+    
             } catch (error) {
                 console.error('Error sending message:', error);
             }
