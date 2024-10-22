@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, UploadFile, File
 from typing import List
 from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
 from utils.dbutils import DBUtils
+import os  # Import os to handle directory operations
 
 from models.contacts import ContactCreate,ContactResponse  # Ensure correct imports
 from models.tasks import TaskCreate, TaskResponse
@@ -17,9 +18,21 @@ from notes import add_note_to_db, update_note_in_db, delete_note_from_db, list_n
 from starlette.requests import Request
 from chains.init_chain import intent_chain
 from sqlalchemy.orm import Session
+from modules.openai import send_to_whisper_model
 
 
 app = FastAPI()
+# Add CORS middleware to allow all origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+)
+
+# Ensure the uploads directory exists relative to the current file's directory
+UPLOADS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+os.makedirs(UPLOADS_DIR, exist_ok=True)  # Create the directory if it doesn't exist
 
 DB = DBUtils()
 dbSession : Session = Depends(DB.get_db)
@@ -117,6 +130,20 @@ async def chat_response(chat_message: ChatMessage,request: Request):
 
     out = app.chain.invoke({
         "question": chat_message.message,
+    })
+    return out
+
+# Endpoint to receive audio
+@app.post("/chat/audio")
+async def receive_audio(file: UploadFile = File(...)):
+    # Read the audio file content
+    content = await file.read()
+    
+    # Send the audio content to OpenAI Whisper model
+    response = await send_to_whisper_model(content)  # New function to handle the API call
+    
+    out = app.chain.invoke({
+        "question": response,
     })
     return out
 
