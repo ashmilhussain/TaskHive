@@ -40,10 +40,20 @@ def delete_task_from_db(task_id: int, db: Session):
 
 def list_tasks_from_db(db: Session) -> List[TaskResponse]:
     tasks = db.query(Task).all()  # Fetch all tasks
+    task_response_list = []
+    for task in tasks:
+        task_response = TaskResponse(
+            id=task.id,
+            title=task.title,
+            description=task.description,
+            contact=task.contact.name if task.contact else "",  # Handle case where contact might be None
+            completed=task.completed,
+            created_time=task.created_time
+        )
+        task_response_list.append(task_response)  # Append the task_response to the list
+    # ... existing code to process task_response ...
     # Loop through tasks to assign contact name
-    return [TaskResponse(id=task.id, title=task.title, description=task.description, 
-                         contact=task.contact.name, completed=task.completed, 
-                         created_time=task.created_time) for task in tasks]
+    return task_response_list
 
 def get_task_from_db(task_id: int, db: Session) -> TaskResponse:
     db_task = db.query(Task).filter(Task.id == task_id).first()
