@@ -48,7 +48,8 @@ def list_tasks_from_db(db: Session) -> List[TaskResponse]:
             description=task.description,
             contact=task.contact.name if task.contact else "",  # Handle case where contact might be None
             completed=task.completed,
-            created_time=task.created_time
+            created_time=task.created_time,
+            due_date= task.due_date
         )
         task_response_list.append(task_response)  # Append the task_response to the list
     # ... existing code to process task_response ...

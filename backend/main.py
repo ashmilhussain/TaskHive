@@ -19,6 +19,7 @@ from starlette.requests import Request
 from chains.init_chain import intent_chain
 from sqlalchemy.orm import Session
 from modules.openai import send_to_whisper_model
+from home import get_home_db,HomeResponse
 
 
 app = FastAPI()
@@ -42,6 +43,10 @@ app.chain = intent_chain(DB)
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+@app.get("/home", response_model=HomeResponse)
+def get_home(dbSession : Session = Depends(DB.get_db)):
+    return get_home_db(dbSession)
 
 @app.post("/contacts", response_model=ContactResponse)
 def add_contact(contact: ContactCreate,dbSession : Session = Depends(DB.get_db)):

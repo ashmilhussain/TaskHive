@@ -57,6 +57,7 @@ class TaskResponse(BaseModel):
     contact : str
     completed: bool
     created_time: datetime
+    due_date : datetime
         
     class Config:
         orm_mode = True  # Enable ORM mode to read data as dictionaries
