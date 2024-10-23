@@ -63,46 +63,67 @@ const Contacts = () => {
     }
 
     return (
-        <div>
-            <h1>Contacts</h1>
-            <button onClick={handleCreateContact} style={{ marginBottom: '20px' }}>
-                Create New Contact
+        <div class="px-4 py-3 justify-between">
+            <div class="flex px-4 py-3 justify-end">
+            <button onClick={handleCreateContact} class="min-w-[84px] max-w-[480px] cursor-pointer overflow-hidden rounded-xl h-8 px-4 bg-[#1d8cd7] text-white text-sm font-medium leading-normal @[480px]:block">
+            <span class="truncate">Create New Contact</span>                
             </button>
+            </div>
             {contacts.length === 0 ? (
                 <p className="no-contacts">No contacts found.</p>
             ) : (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Organization</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {contacts.map(contact => (
-                            <tr key={contact.id}>
-                                <td>{contact.name}</td>
-                                <td>{contact.mobile}</td>
-                                <td>{contact.email}</td>
-                                <td>{contact.organization}</td>
-                                <td>
-                                    <i className="fas fa-trash-alt delete-icon" onClick={() => openConfirmModal(contact.id)}></i>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
-            {isModalOpen && (
-                <div className={`modal ${isModalOpen ? 'open' : ''}`}>
-                    <div className="modal-content">
-                        <span className="close" onClick={closeModal}>&times;</span>
-                        <CreateContact closeModal={closeModal} />
+                <div class="px-4 py-3 justify-between">
+                <h3 class="text-[#111517] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Idle Contacts</h3>
+                {contacts.map(contact => (
+                    <div class="flex gap-4 bg-white px-4 py-3 justify-between">
+                    <div class="flex items-start gap-4">
+                      <div
+                        class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-[70px] w-fit"
+                        style={{backgroundImage: 'url("https://cdn.usegalileo.ai/stability/a70cd5bb-a687-4667-9525-da1a3eafc973.png")'}}
+                      ></div>
+                      <div class="flex flex-1 flex-col justify-center">
+                        <p class="text-[#111517] text-base font-medium leading-normal">{contact.name}</p>
+                        <p class="text-[#647987] text-sm font-normal leading-normal">Personal</p>
+                        <p class="text-[#647987] text-sm font-normal leading-normal">No recent activity</p>
+                      </div>
                     </div>
+                    <div class="shrink-0"><button class="text-base font-medium leading-normal">Email</button></div>
+                  </div>
+                        ))}
                 </div>
+
+            //     <table>
+            //         <thead>
+            //             <tr>
+            //                 <th>Name</th>
+            //                 <th>Phone</th>
+            //                 <th>Email</th>
+            //                 <th>Organization</th>
+            //                 <th>Action</th>
+            //             </tr>
+            //         </thead>
+            //         <tbody>
+            //             {contacts.map(contact => (
+            //                 <tr key={contact.id}>
+            //                     <td>{contact.name}</td>
+            //                     <td>{contact.mobile}</td>
+            //                     <td>{contact.email}</td>
+            //                     <td>{contact.organization}</td>
+            //                     <td>
+            //                         <i className="fas fa-trash-alt delete-icon" onClick={() => openConfirmModal(contact.id)}></i>
+            //                     </td>
+            //                 </tr>
+            //             ))}
+            //         </tbody>
+            //     </table>
+            // )}
+            // {isModalOpen && (
+            //     <div className={`modal ${isModalOpen ? 'open' : ''}`}>
+            //         <div className="modal-content">
+            //             <span className="close" onClick={closeModal}>&times;</span>
+            //             <CreateContact closeModal={closeModal} />
+            //         </div>
+            //     </div>
             )}
             <ConfirmationModal
                 isOpen={isConfirmOpen}
