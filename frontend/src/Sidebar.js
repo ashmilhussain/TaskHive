@@ -22,8 +22,8 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li>
-                    <Link to="/calendar">
-                        <i className="fas fa-calendar-alt"></i> Calendar
+                    <Link to="/notes">
+                        <i className="fas fa-sticky-note"></i> Notes
                     </Link>
                 </li>
             </ul>

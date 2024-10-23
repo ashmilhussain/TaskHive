@@ -76,49 +76,31 @@ const Tasks = () => {
 
                 ))}
                 </div>
-            //     <table>
-            //         <thead>
-            //             <tr>
-            //                 <th>Title</th>
-            //                 <th>Description</th>
-            //                 <th>Completed</th>
-            //             </tr>
-            //         </thead>
-            //         <tbody>
-            //             {tasks.map(task => (
-            //                 <tr key={task.id}>
-            //                     <td>{task.title}</td>
-            //                     <td>{task.description}</td>
-            //                     <td>{task.completed ? 'Yes' : 'No'}</td>
-            //                 </tr>
-            //             ))}
-            //         </tbody>
-            //     </table>
-            // )}
-            // {isModalOpen && (
-            //     <div className={`modal ${isModalOpen ? 'open' : ''}`}>
-            //         <div className="modal-content">
-            //             <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
-            //             <h2>Add New Task</h2>
-            //             <input
-            //                 type="text"
-            //                 name="title"
-            //                 value={newTask.title}
-            //                 onChange={handleInputChange}
-            //                 placeholder="Task Title"
-            //                 required
-            //             />
-            //             <input
-            //                 type="text"
-            //                 name="description"
-            //                 value={newTask.description}
-            //                 onChange={handleInputChange}
-            //                 placeholder="Task Description"
-            //                 required
-            //             />
-            //             <button onClick={handleAddTask}>Add Task</button>
-            //         </div>
-            //     </div>
+                )}
+            {isModalOpen && (
+                <div className={`modal ${isModalOpen ? 'open' : ''}`}>
+                    <div className="modal-content">
+                        <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
+                        <h2>Add New Task</h2>
+                        <input
+                            type="text"
+                            name="title"
+                            value={newTask.title}
+                            onChange={handleInputChange}
+                            placeholder="Task Title"
+                            required
+                        />
+                        <input
+                            type="text"
+                            name="description"
+                            value={newTask.description}
+                            onChange={handleInputChange}
+                            placeholder="Task Description"
+                            required
+                        />
+                        <button onClick={handleAddTask}>Add Task</button>
+                    </div>
+                </div>
             )}
         </div>
     );

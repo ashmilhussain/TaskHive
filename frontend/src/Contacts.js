@@ -91,39 +91,14 @@ const Contacts = () => {
                   </div>
                         ))}
                 </div>
-
-            //     <table>
-            //         <thead>
-            //             <tr>
-            //                 <th>Name</th>
-            //                 <th>Phone</th>
-            //                 <th>Email</th>
-            //                 <th>Organization</th>
-            //                 <th>Action</th>
-            //             </tr>
-            //         </thead>
-            //         <tbody>
-            //             {contacts.map(contact => (
-            //                 <tr key={contact.id}>
-            //                     <td>{contact.name}</td>
-            //                     <td>{contact.mobile}</td>
-            //                     <td>{contact.email}</td>
-            //                     <td>{contact.organization}</td>
-            //                     <td>
-            //                         <i className="fas fa-trash-alt delete-icon" onClick={() => openConfirmModal(contact.id)}></i>
-            //                     </td>
-            //                 </tr>
-            //             ))}
-            //         </tbody>
-            //     </table>
-            // )}
-            // {isModalOpen && (
-            //     <div className={`modal ${isModalOpen ? 'open' : ''}`}>
-            //         <div className="modal-content">
-            //             <span className="close" onClick={closeModal}>&times;</span>
-            //             <CreateContact closeModal={closeModal} />
-            //         </div>
-            //     </div>
+                )}
+            {isModalOpen && (
+                <div className={`modal ${isModalOpen ? 'open' : ''}`}>
+                    <div className="modal-content">
+                        <span className="close" onClick={closeModal}>&times;</span>
+                        <CreateContact closeModal={closeModal} />
+                    </div>
+                </div>
             )}
             <ConfirmationModal
                 isOpen={isConfirmOpen}
